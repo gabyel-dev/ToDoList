@@ -71,81 +71,89 @@ export default function Login() {
   }, [navigate]);
 
   return (
-    <div className="w-full h-[100vh] flex flex-col justify-center items-center bg-[#f2f2f2] text-[#38383A]">
-      <div className="w-[18em] text-left pb-10">
-        <h1 className="text-left font-bold text-3xl">Taskly</h1>
-      </div>
-      <div className="flex flex-col justify-center items-center gap-10">
-        <form onSubmit={handleLogin} className="w-[18em] flex flex-col gap-5">
-          <div className="flex justify-start items-center gap-2 border-b-1 border-gray-400">
-            {user_icon}
-            <input
-              type="text"
-              name="username"
-              value={loginData.username}
-              onChange={handleLoginChange}
-              className="outline-0 p-1"
-              required
-              placeholder="Username"
-            />
-          </div>
-          <div className="flex justify-between items-center gap-2 border-b-1 border-gray-400">
-            <div className="flex justify-start items-center gap-2 w-full">
-              {password_icon}
+    <>
+      <div className="w-full h-[85vh] flex flex-col justify-center items-center bg-[#f2f2f2] text-[#38383A]">
+        <div className="w-[18em] text-left pb-24">
+          <h1 className="text-left font-bold text-4xl">Taskly</h1>
+        </div>
+        <div className="flex flex-col justify-center items-center gap-11">
+          <form onSubmit={handleLogin} className="w-[18em] flex flex-col gap-7">
+            <div className="flex justify-start items-center gap-2 border-b-1 border-gray-400">
+              {user_icon}
               <input
-                type={showPassword ? "text" : "password"}
-                name="password"
-                value={loginData.password}
+                type="text"
+                name="username"
+                value={loginData.username}
                 onChange={handleLoginChange}
                 className="outline-0 p-1"
                 required
-                placeholder="Password"
+                placeholder="Username"
               />
             </div>
-            <button onClick={toggleShow} className="text-gray-500">
-              {showPassword ? hide : show}
+            <div>
+              <div className="flex justify-between items-center gap-2 border-b-1 border-gray-400">
+                <div className="flex justify-start items-center gap-2 w-full">
+                  {password_icon}
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    name="password"
+                    value={loginData.password}
+                    onChange={handleLoginChange}
+                    className="outline-0 p-1"
+                    required
+                    placeholder="Password"
+                  />
+                </div>
+
+                <button onClick={toggleShow} className="text-gray-500">
+                  {showPassword ? hide : show}
+                </button>
+              </div>
+              {error && (
+                <p className="text-red-400 text-[0.8em] flex justify-start text-left leading-8 rounded-sm ">
+                  {error}
+                </p>
+              )}
+            </div>
+
+            <div className="flex justify-between items-center">
+              <Link
+                to={"/reset-password"}
+                className="text-[0.8em] leading-0 text-gray-500"
+              >
+                Forgot password?
+              </Link>
+
+              <button
+                type="submit"
+                className="bg-[#38383A] rounded-sm px-8 py-2 text-white cursor-pointer"
+              >
+                LOGIN
+              </button>
+            </div>
+          </form>
+          <div className="flex justify-center items-center gap-2 w-[80%] leading-0">
+            <hr className="flex-grow border-gray-400" />
+            <span className="text-gray-400 pb-[0.3em]">or</span>
+            <hr className="flex-grow border-gray-400" />
+          </div>
+
+          <div className="flex w-full">
+            <div className="bg-black flex justify-center items-center text-white text-sm px-3 py-2 rounded-bl-sm rounded-tl-sm">
+              {google}
+            </div>
+            <button className="bg-[#38383A] text-white text-sm px-5 py-2.5 rounded-br-sm rounded-tr-sm w-full flex justify-center items-center">
+              LOGIN WITH GOOGLE
             </button>
           </div>
-          <div className="flex justify-between items-center">
-            <Link
-              to={"/reset-password"}
-              className="text-[0.8em] leading-0 pb-6 text-gray-500"
-            >
-              Forgot password?
-            </Link>
-
-            <button
-              type="submit"
-              className="bg-[#38383A] rounded-sm px-8 py-2 text-white cursor-pointer"
-            >
-              LOGIN
-            </button>
-          </div>
-          {error && (
-            <p className="text-red-500 text-[0.8em] leading-0 pb-3 ">{error}</p>
-          )}
-        </form>
-        <div className="flex justify-center items-center gap-2 w-[80%] leading-0">
-          <hr className="flex-grow border-gray-400" />
-          <span className="text-gray-400 pb-[0.3em]">or</span>
-          <hr className="flex-grow border-gray-400" />
-        </div>
-
-        <div className="flex w-full">
-          <div className="bg-black flex justify-center items-center text-white text-sm px-3 py-2 rounded-bl-sm rounded-tl-sm">
-            {google}
-          </div>
-          <button className="bg-[#38383A] text-white text-sm px-5 py-2.5 rounded-br-sm rounded-tr-sm w-full flex justify-center items-center">
-            LOGIN WITH GOOGLE
-          </button>
-        </div>
-        <div className="flex flex-col justify-center items-center gap-1">
-          <p className="text-gray-400 text-[0.9em]">Don't have an account?</p>
-          <Link to={"/register"} className="font-semibold text-lg">
-            SIGN UP
-          </Link>
         </div>
       </div>
-    </div>
+      <div className="flex flex-col justify-center items-center gap-1 bottom-0 bg-[#f2f2f2] h-[15vh]">
+        <p className="text-gray-400 text-[0.9em]">Don't have an account?</p>
+        <Link to={"/register"} className="font-semibold text-lg">
+          SIGN UP
+        </Link>
+      </div>
+    </>
   );
 }
