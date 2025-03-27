@@ -142,7 +142,7 @@ export default function Login() {
             <div className="bg-black flex justify-center items-center text-white text-sm px-3 py-2 rounded-bl-sm rounded-tl-sm">
               {google}
             </div>
-            <button className="bg-[#38383A] text-white text-sm px-5 py-2.5 rounded-br-sm rounded-tr-sm w-full flex justify-center items-center">
+            <button className="bg-[#38383A] cursor-pointer text-white text-sm px-5 py-2.5 rounded-br-sm rounded-tr-sm w-full flex justify-center items-center">
               LOGIN WITH GOOGLE
             </button>
           </div>
