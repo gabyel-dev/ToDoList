@@ -103,7 +103,6 @@ def reset_password():
     finally:
         cursor.close()
         conn.close()
-
         
 #logout functionality
 @auth_bp.route('/logout', methods=['POST'])
@@ -115,5 +114,60 @@ def logout():
 @auth_bp.route('/user', methods=['GET'])
 def check_session():
     return jsonify({'user': session.get('user'), 'logged_in': "user" in session, 'redirect': '/dashboard' if 'user' in session else '/'}), 200
+
+
+########################
+# TASKS FUNCTIONALITY #
+#######################
+@auth_bp.route('/create_task', methods=['POST'])
+def add_tasks(): 
+    data = request.get_json()
+    userID = session['user']
+    taskTITLE = data.get('title')
+    taskDESC = data.get('description')
+    
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    cursor.execute(
+            '''
+            INSERT INTO tasks (user_id, title, description) 
+            VALUES (%s, %s, %s) 
+            RETURNING id, user_id, title, description, status, created_at
+            ''',
+            (userID, taskTITLE, taskDESC)
+        )
+    new_task = cursor.fetchone()
+    
+    conn.commit()
+    
+    cursor.close()
+    conn.close()
+    
+    return jsonify(new_task)
+
+
+#get all tasks
+@auth_bp.route('/get_all/<int:id>', methods=['GET'])
+def get_tasks(id):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute('SELECT id, title, description FROM tasks WHERE user_id = %s', (id,))
+        tasks = cursor.fetchall()
+
+        return jsonify(tasks)
+    except Exception as e:
+        return jsonify({'error': 'Error fetching tasks', 'details': str(e)})
+    finally:
+        cursor.close()
+        conn.close()
+
+
+    
+    
+    
+    
         
         

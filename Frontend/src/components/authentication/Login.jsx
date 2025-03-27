@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser, faLock } from "@fortawesome/free-solid-svg-icons";
 import { faEye, faEyeSlash } from "@fortawesome/free-regular-svg-icons";
 import { faGoogle } from "@fortawesome/free-brands-svg-icons";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
 import axios from "axios";
 
@@ -17,6 +17,7 @@ const hide = <FontAwesomeIcon icon={faEyeSlash} />;
 
 export default function Login() {
   const navigate = useNavigate();
+  const { user } = useParams();
 
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -29,13 +30,13 @@ export default function Login() {
     e.preventDefault();
 
     try {
-      await axios.post("http://localhost:5000/login", loginData, {
+      const res = await axios.post("http://localhost:5000/login", loginData, {
         withCredentials: true,
         headers: {
           "Content-Type": "application/json",
         },
       });
-      navigate("/dashboard");
+      navigate(`/dashboard/${res.data.user}`);
     } catch (error) {
       setError(
         error.response?.status === 401
@@ -62,11 +63,11 @@ export default function Login() {
   //check user session
   useEffect(() => {
     axios
-      .get("http://localhost:5000/user", {
-        withCredentials: true,
-      })
+      .get("http://localhost:5000/user", { withCredentials: true })
       .then((res) => {
-        navigate(res.data.logged_in ? "/dashboard" : "/");
+        if (res.data.logged_in) {
+          navigate(`/dashboard/${res.data.user}`);
+        }
       });
   }, [navigate]);
 

@@ -15,7 +15,7 @@ function App() {
           <Route path="/" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route
-            path="/dashboard"
+            path="/dashboard/:user"
             element={
               <Dashboard activeTab={activeTab} setActiveTab={setActiveTab} />
             }
