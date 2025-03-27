@@ -2,9 +2,12 @@ import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser, faLock } from "@fortawesome/free-solid-svg-icons";
 import { faEye, faEyeSlash } from "@fortawesome/free-regular-svg-icons";
+import { faGoogle } from "@fortawesome/free-brands-svg-icons";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import axios from "axios";
+
+const google = <FontAwesomeIcon icon={faGoogle} />;
 
 const user_icon = <FontAwesomeIcon icon={faUser} />;
 const password_icon = <FontAwesomeIcon icon={faLock} />;
@@ -99,21 +102,43 @@ export default function Login() {
                 placeholder="Password"
               />
             </div>
-            <button onClick={toggleShow}>{showPassword ? hide : show}</button>
+            <button onClick={toggleShow} className="text-gray-500">
+              {showPassword ? hide : show}
+            </button>
           </div>
-          <Link to={"/reset-password"}>Forgot password?</Link>
+          <div className="flex justify-between items-center">
+            <Link
+              to={"/reset-password"}
+              className="text-[0.8em] leading-0 pb-6 text-gray-500"
+            >
+              Forgot password?
+            </Link>
+
+            <button
+              type="submit"
+              className="bg-[#38383A] rounded-sm px-8 py-2 text-white cursor-pointer"
+            >
+              LOGIN
+            </button>
+          </div>
           {error && (
             <p className="text-red-500 text-[0.8em] leading-0 pb-3 ">{error}</p>
           )}
-
-          <button
-            type="submit"
-            className="bg-[#38383A] rounded-sm px-5 py-2 text-white cursor-pointer"
-          >
-            LOGIN
-          </button>
         </form>
+        <div className="flex justify-center items-center gap-2 w-[80%] leading-0">
+          <hr className="flex-grow border-gray-400" />
+          <span className="text-gray-400 pb-[0.3em]">or</span>
+          <hr className="flex-grow border-gray-400" />
+        </div>
 
+        <div className="flex w-full">
+          <div className="bg-black flex justify-center items-center text-white text-sm px-3 py-2 rounded-bl-sm rounded-tl-sm">
+            {google}
+          </div>
+          <button className="bg-[#38383A] text-white text-sm px-5 py-2.5 rounded-br-sm rounded-tr-sm w-full flex justify-center items-center">
+            LOGIN WITH GOOGLE
+          </button>
+        </div>
         <div className="flex flex-col justify-center items-center gap-1">
           <p className="text-gray-400 text-[0.9em]">Don't have an account?</p>
           <Link to={"/register"} className="font-semibold text-lg">

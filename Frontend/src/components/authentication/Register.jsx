@@ -35,7 +35,7 @@ export default function Register() {
     } catch (error) {
       setError(
         error.response?.status === 409
-          ? "Username already used"
+          ? "✕ Username taken"
           : error.response?.status === 400
           ? "Password must be 8 characters long"
           : ""
@@ -111,7 +111,7 @@ export default function Register() {
 
           <button
             type="submit"
-            className="bg-[#38383A] rounded-sm px-5 py-2 text-white cursor-pointer"
+            className="bg-[#38383A] rounded-sm px-5 py-2 text-white cursor-pointer mt-3"
           >
             Register
           </button>

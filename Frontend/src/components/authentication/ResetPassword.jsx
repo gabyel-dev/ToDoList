@@ -143,7 +143,7 @@ export default function ResetPass() {
 
           <button
             type="submit"
-            className="bg-[#38383A] rounded-sm px-5 py-2 text-white cursor-pointer"
+            className="bg-[#38383A] rounded-sm px-5 py-2 text-white cursor-pointer mt-3"
           >
             RESET
           </button>
