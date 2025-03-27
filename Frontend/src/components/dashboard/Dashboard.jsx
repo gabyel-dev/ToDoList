@@ -24,7 +24,7 @@ export default function Dashboard() {
       .then((res) => {
         navigate(res.data.logged_in ? "/dashboard" : "/");
       });
-  });
+  }, []);
 
   return (
     <div>

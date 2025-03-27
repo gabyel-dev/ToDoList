@@ -52,7 +52,7 @@ def register():
         hashed_password = hash_password(password)
         
         if len(password) < 8:
-            return jsonify({'message': 'password must be atleast 8 characters above'}), 400
+            return jsonify({'message': 'password must be atleast 8 characters long'}), 400
         
         cursor.execute('INSERT INTO users (username, password) VALUES (%s, %s)', (username, hashed_password))
         conn.commit()
@@ -66,6 +66,46 @@ def register():
     if conn:
         conn.close()
         
+@auth_bp.route('/reset-password', methods=['POST'])
+def reset_password():
+    data = request.get_json()
+    username, password, new_password = data.get('username'), data.get('password'), data.get('newPassword')
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute('SELECT password FROM users WHERE username = %s', (username,))
+        user = cursor.fetchone()
+
+        # Check if user exists and password is correct
+        if not user or not check_password(user['password'], password):
+            return jsonify({'error': 'Invalid username or password'}), 401
+
+        # Validate new password
+        if check_password(user['password'], new_password) or len(new_password) < 8:
+            error_msg = 'New password must be different' if check_password(user['password'], new_password) else 'Password must be at least 8 characters long'
+            return jsonify({'error': error_msg}), 400
+
+        # Update password
+        hash_new_password = hash_password(new_password)
+        cursor.execute('UPDATE users SET password = %s WHERE username = %s', (hash_new_password, username))
+
+        if cursor.rowcount == 0:
+            return jsonify({'error': 'Password update failed'}), 400
+
+        conn.commit()
+        return jsonify({'message': 'Password updated successfully'}), 200
+
+    except Exception as e:
+        return jsonify({'error': 'Failed to reset password', 'details': str(e)}), 500
+
+    finally:
+        cursor.close()
+        conn.close()
+
+        
+#logout functionality
 @auth_bp.route('/logout', methods=['POST'])
 def logout():
     session.clear()
