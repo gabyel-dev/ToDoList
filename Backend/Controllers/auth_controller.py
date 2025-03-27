@@ -19,9 +19,7 @@ def login():
         cursor.execute('SELECT * FROM users WHERE username = %s', (username,))
         user = cursor.fetchone()
         
-        check_user_pass = check_password(user['password'], password)
-        
-        if user is None or not check_user_pass:
+        if user is None or not check_password(user['password'], password):
             return jsonify({'error': 'Invalid Credentials'}), 401
         
         session['user'] = user['id']
@@ -67,6 +65,11 @@ def register():
         cursor.close()
     if conn:
         conn.close()
+        
+@auth_bp.route('/logout', methods=['POST'])
+def logout():
+    session.clear()
+    return jsonify({'message': 'logged out successfully', 'redirect': '/'})
 
 #check user session
 @auth_bp.route('/user', methods=['GET'])

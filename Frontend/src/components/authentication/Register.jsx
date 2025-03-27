@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser, faLock } from "@fortawesome/free-solid-svg-icons";
 import { faEye, faEyeSlash } from "@fortawesome/free-regular-svg-icons";
@@ -56,6 +56,17 @@ export default function Register() {
     e.preventDefault();
     setShowPassword(!showPassword);
   };
+
+  //check user session
+  useEffect(() => {
+    axios
+      .get("http://localhost:5000/user", {
+        withCredentials: true,
+      })
+      .then((res) => {
+        navigate(res.data.logged_in ? "/dashboard" : "/register");
+      });
+  }, [navigate]);
 
   return (
     <div className="w-full h-[100vh] flex flex-col justify-center items-center bg-[#f2f2f2] text-[#38383A]">
