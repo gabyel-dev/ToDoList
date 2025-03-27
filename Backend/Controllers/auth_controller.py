@@ -53,6 +53,9 @@ def register():
         
         hashed_password = hash_password(password)
         
+        if len(password) < 8:
+            return jsonify({'message': 'password must be atleast 8 characters above'}), 400
+        
         cursor.execute('INSERT INTO users (username, password) VALUES (%s, %s)', (username, hashed_password))
         conn.commit()
         
@@ -62,6 +65,7 @@ def register():
         return jsonify({'error': 'registration failed', 'details': str(e)}), 500
     finally:
         cursor.close()
+    if conn:
         conn.close()
 
 #check user session
