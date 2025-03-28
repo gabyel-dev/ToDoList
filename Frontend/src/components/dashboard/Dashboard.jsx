@@ -13,6 +13,7 @@ export default function Dashboard({ activeTab, setActiveTab }) {
 
   //check user session
   useEffect(() => {
+    document.title = `Taskly - Dashboard`;
     axios
       .get("http://localhost:5000/user", {
         withCredentials: true,

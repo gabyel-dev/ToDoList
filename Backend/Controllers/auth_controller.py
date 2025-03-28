@@ -164,10 +164,28 @@ def get_tasks(id):
         cursor.close()
         conn.close()
         
-@auth_bp.route('/delete/<int:id>', methods=['GET'])
-def del_task():
+@auth_bp.route('/task/<int:id>', methods=['GET'])
+def get_task(id):
     conn = get_db_connection()
     cursor = conn.cursor()
+    
+    try:
+        cursor.execute('SELECT id, title, description, status FROM tasks WHERE id = %s', (id,))
+        task = cursor.fetchone()
+
+        if not task:
+            print(f"Task with ID {id} not found")  # Debugging
+            return jsonify({'error': 'Task not found'}), 404  # Return proper 404 response
+
+        print(f"Task found: {task}")  # Debugging
+        return jsonify(task)
+    except Exception as e:
+        print(f"Error fetching task: {e}")  # Debugging
+        return jsonify({'error': 'Error fetching task', 'details': str(e)}), 500
+    finally:
+        cursor.close()
+        conn.close()
+
     
     
 

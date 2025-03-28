@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom"; // ✅ Import useNavigate
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 
 export default function TaskToday({ setActiveTab }) {
-  const { user } = useParams();
+  const { user, id } = useParams();
+  const navigate = useNavigate(); // ✅ Get navigate function
   const [taskCount, setTaskCount] = useState(0);
   const [error, setError] = useState("");
   const [tasks, setTasks] = useState([]);
@@ -24,7 +25,6 @@ export default function TaskToday({ setActiveTab }) {
       setTaskCount(fetchTask.length);
     } catch (error) {
       console.error("Error fetching tasks:", error);
-      setError("Failed to fetch tasks.");
     }
   };
 
@@ -47,12 +47,12 @@ export default function TaskToday({ setActiveTab }) {
   }, [user]);
 
   return (
-    <div className="flex">
+    <div className="flex flex-col">
       {/* Task Content */}
+      <h1 className="text-xl font-bold text-gray-800 mb-4">
+        Incomplete Tasks ({taskCount})
+      </h1>
       <div className="w-full mx-auto h-[94vh] p-4 bg-white shadow rounded-lg flex-1">
-        <h1 className="text-xl font-bold text-gray-800 mb-4">
-          Incomplete Tasks ({taskCount})
-        </h1>
         {error && <p className="text-red-500">{error}</p>}
 
         {/* Task Form */}
@@ -64,7 +64,7 @@ export default function TaskToday({ setActiveTab }) {
             onChange={handleTaskChange}
             placeholder="Task Title"
             required
-            className="p-2 border rounded-lg text-sm"
+            className="p-2 border rounded-lg text-sm outline-0"
           />
           <textarea
             name="description"
@@ -72,11 +72,11 @@ export default function TaskToday({ setActiveTab }) {
             onChange={handleTaskChange}
             placeholder="Task Description"
             required
-            className="p-2 border rounded-lg h-20 text-sm"
+            className="p-2 border rounded-lg h-20 text-sm outline-0"
           />
           <button
             type="submit"
-            className="bg-blue-600 text-white py-2 rounded-lg text-sm hover:bg-blue-700"
+            className="bg-[#38383A] text-white py-2 rounded-lg text-sm hover:bg-[#272728]"
           >
             Add Task
           </button>
@@ -85,9 +85,9 @@ export default function TaskToday({ setActiveTab }) {
         {/* Task List */}
         <div className="space-y-2 overflow-y-scroll scroll-smooth min-h-[19vh] max-h-[53vh]">
           {tasks.length > 0 ? (
-            tasks.map((task, index) => (
+            tasks.map((task) => (
               <div
-                key={index}
+                key={task.id}
                 className="flex items-center justify-between p-3 bg-gray-100 rounded-lg shadow-sm w-[68vw]"
               >
                 <div>
@@ -98,7 +98,15 @@ export default function TaskToday({ setActiveTab }) {
                     {task.description}
                   </p>
                 </div>
-                <button onClick={() => setActiveTab("TaskOverview")}>
+
+                {/* ✅ Navigate to TaskOverview when clicked */}
+                <button
+                  onClick={() => {
+                    setActiveTab("TaskOverview"); // ✅ Set active tab
+                    navigate(`/dashboard/${user}/task/${task.id}`);
+                  }}
+                  className="hover:bg-gray-200 p-2 rounded-full"
+                >
                   <FontAwesomeIcon icon={faChevronRight} />
                 </button>
               </div>
