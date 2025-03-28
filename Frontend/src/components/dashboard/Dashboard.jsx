@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import Menu from "./DashboardMenu";
 import TaskToday from "./TaskToday";
 import CompleteTask from "./TaskCompleted";
+import TaskOverview from "./TaskOverview";
 import axios from "axios";
 
 export default function Dashboard({ activeTab, setActiveTab }) {
@@ -25,8 +26,9 @@ export default function Dashboard({ activeTab, setActiveTab }) {
     <div className="flex p-5">
       <Menu activeTab={activeTab} setActiveTab={setActiveTab} />
       <div className="flex-1 px-7">
-        {activeTab === "Today" && <TaskToday />}
+        {activeTab === "Today" && <TaskToday setActiveTab={setActiveTab} />}
         {activeTab === "Completed" && <CompleteTask />}
+        {activeTab === "TaskOverview" && <TaskOverview />}
       </div>
     </div>
   );

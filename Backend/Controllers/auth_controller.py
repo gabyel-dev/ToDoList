@@ -154,7 +154,7 @@ def get_tasks(id):
     cursor = conn.cursor()
 
     try:
-        cursor.execute('SELECT id, title, description FROM tasks WHERE user_id = %s', (id,))
+        cursor.execute('SELECT id, title, description, status FROM tasks WHERE user_id = %s', (id,))
         tasks = cursor.fetchall()
 
         return jsonify(tasks)
@@ -163,6 +163,13 @@ def get_tasks(id):
     finally:
         cursor.close()
         conn.close()
+        
+@auth_bp.route('/delete/<int:id>', methods=['GET'])
+def del_task():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    
 
 
     
