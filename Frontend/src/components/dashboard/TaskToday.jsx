@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom"; // ✅ Import useNavigate
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
+import { faChevronRight, faTrash } from "@fortawesome/free-solid-svg-icons";
 
 export default function TaskToday({ setActiveTab }) {
   const { user, id } = useParams();
@@ -15,6 +15,25 @@ export default function TaskToday({ setActiveTab }) {
   const handleTaskChange = (e) => {
     const { name, value } = e.target;
     setTaskData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const deleteTask = async (taskId) => {
+    if (!taskId) {
+      console.error("Task ID is undefined");
+      return;
+    }
+
+    try {
+      await axios.delete(`http://localhost:5000/delete/${taskId}`, {
+        withCredentials: true,
+      });
+
+      // Update the task list after deletion
+      setTasks((prevTasks) => prevTasks.filter((task) => task.id !== taskId));
+      setTaskCount((prevCount) => prevCount - 1);
+    } catch (error) {
+      console.error("Error deleting task:", error);
+    }
   };
 
   const fetchTasks = async () => {
@@ -100,15 +119,23 @@ export default function TaskToday({ setActiveTab }) {
                 </div>
 
                 {/* ✅ Navigate to TaskOverview when clicked */}
-                <button
-                  onClick={() => {
-                    setActiveTab("TaskOverview"); // ✅ Set active tab
-                    navigate(`/dashboard/${user}/task/${task.id}`);
-                  }}
-                  className="hover:bg-gray-200 p-2 rounded-full"
-                >
-                  <FontAwesomeIcon icon={faChevronRight} />
-                </button>
+                <div>
+                  <button
+                    onClick={() => {
+                      setActiveTab("Taskoverview"); // Call activeTab function
+                      navigate(`/dashboard/${user}/task/${task.id}`); // Navigate to the new route
+                    }}
+                    className="hover:bg-gray-200 p-2 rounded-full"
+                  >
+                    <FontAwesomeIcon icon={faChevronRight} />
+                  </button>
+                  <button
+                    onClick={() => deleteTask(task.id)}
+                    className="hover:bg-gray-200 p-2 rounded-full"
+                  >
+                    <FontAwesomeIcon icon={faTrash} />
+                  </button>
+                </div>
               </div>
             ))
           ) : (

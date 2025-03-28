@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify, session
 from Models.database import get_db_connection 
 from Utils.hashed_passwords import hash_password, check_password
+from datetime import datetime
 
 auth_bp = Blueprint('auth', __name__)
 
@@ -154,7 +155,7 @@ def get_tasks(id):
     cursor = conn.cursor()
 
     try:
-        cursor.execute('SELECT id, title, description, status FROM tasks WHERE user_id = %s', (id,))
+        cursor.execute('SELECT id, title, description, status, created_at FROM tasks WHERE user_id = %s', (id,))
         tasks = cursor.fetchall()
 
         return jsonify(tasks)
@@ -170,8 +171,9 @@ def get_task(id):
     cursor = conn.cursor()
     
     try:
-        cursor.execute('SELECT id, title, description, status FROM tasks WHERE id = %s', (id,))
+        cursor.execute('SELECT id, title, description, status, created_at FROM tasks WHERE id = %s', (id,))
         task = cursor.fetchone()
+  
 
         if not task:
             print(f"Task with ID {id} not found")  # Debugging
@@ -182,6 +184,23 @@ def get_task(id):
     except Exception as e:
         print(f"Error fetching task: {e}")  # Debugging
         return jsonify({'error': 'Error fetching task', 'details': str(e)}), 500
+    finally:
+        cursor.close()
+        conn.close()
+        
+@auth_bp.route('/delete/<int:id>', methods=['DELETE'])
+def delete(id):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute('DELETE FROM tasks WHERE id = %s', (id,))
+        conn.commit()
+        
+        return jsonify({'message': 'task deleted successfully'})
+        
+    except Exception as e:
+        return jsonify({'error': 'Error fetching tasks', 'details': str(e)})
     finally:
         cursor.close()
         conn.close()
