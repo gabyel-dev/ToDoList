@@ -188,6 +188,7 @@ def get_task(id):
         cursor.close()
         conn.close()
         
+        
 @auth_bp.route('/delete/<int:id>', methods=['DELETE'])
 def delete(id):
     conn = get_db_connection()
@@ -205,13 +206,22 @@ def delete(id):
         cursor.close()
         conn.close()
 
+@auth_bp.route('/update/<int:id>', methods=['POST'])
+def update_task(id):
+    data = request.get_json()
+    taskTITLE = data.get('title')
+    taskDESC = data.get('description')
+    taskSTATUS = data.get('status')
+    conn = get_db_connection()
+    cursor = conn.cursor()
     
-    
-
-
-    
-    
-    
-    
+    try:
+        cursor.execute('UPDATE tasks SET title = %s, description = %s, status = %s WHERE id = %s', (taskTITLE, taskDESC, taskSTATUS, id))
+        conn.commit()
         
-        
+        return jsonify({'message': 'task updated successfully'}), 200
+    except:
+        return jsonify({'error': 'task failed to update'}), 500
+    finally:
+        cursor.close()
+        conn.close()
