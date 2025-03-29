@@ -1,6 +1,7 @@
 import { useState } from "react";
 import {
   faBars,
+  faFilter,
   faListCheck,
   faListUl,
   faRightFromBracket,
@@ -77,7 +78,7 @@ export default function Menu({ activeTab, setActiveTab }) {
               } transition p-2 rounded-md`}
               onClick={() => setActiveTab("All")}
             >
-              <FontAwesomeIcon icon={faListCheck} className="text-gray-600" />
+              <FontAwesomeIcon icon={faFilter} className="text-gray-600" />
               {!isCollapsed && <p className="text-sm">All</p>}
             </div>
             <div

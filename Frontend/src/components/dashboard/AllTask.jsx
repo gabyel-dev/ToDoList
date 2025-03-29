@@ -48,7 +48,7 @@ export default function AllTask({ setActiveTab }) {
     <div className="flex flex-col">
       {/* Task Content */}
       <h1 className="text-xl font-bold text-gray-800 mb-4">
-        Incomplete Tasks ({taskCount})
+        All Tasks ({taskCount})
       </h1>
       <div className="w-full mx-auto h-[94vh] p-4 bg-white shadow rounded-lg flex-1">
         {error && <p className="text-red-500">{error}</p>}

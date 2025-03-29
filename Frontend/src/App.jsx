@@ -7,7 +7,7 @@ import { useState } from "react";
 import TaskOverview from "./components/dashboard/TaskOverview";
 
 function App() {
-  const [activeTab, setActiveTab] = useState("Today");
+  const [activeTab, setActiveTab] = useState("All");
 
   return (
     <Router>
