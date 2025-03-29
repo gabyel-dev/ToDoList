@@ -5,6 +5,7 @@ import Menu from "./DashboardMenu";
 import TaskToday from "./TaskToday";
 import CompleteTask from "./TaskCompleted";
 import TaskOverview from "./TaskOverview";
+import AllTask from "./AllTask";
 import axios from "axios";
 
 export default function Dashboard({ activeTab, setActiveTab }) {
@@ -27,8 +28,11 @@ export default function Dashboard({ activeTab, setActiveTab }) {
     <div className="flex p-5">
       <Menu activeTab={activeTab} setActiveTab={setActiveTab} />
       <div className="flex-1 px-7">
+        {activeTab === "All" && <AllTask setActiveTab={setActiveTab} />}
         {activeTab === "Today" && <TaskToday setActiveTab={setActiveTab} />}
-        {activeTab === "Completed" && <CompleteTask />}
+        {activeTab === "Completed" && (
+          <CompleteTask setActiveTab={setActiveTab} />
+        )}
         {activeTab === "TaskOverview" && <TaskOverview />}
       </div>
     </div>

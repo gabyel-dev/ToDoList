@@ -17,7 +17,6 @@ const hide = <FontAwesomeIcon icon={faEyeSlash} />;
 
 export default function Login() {
   const navigate = useNavigate();
-  const { user } = useParams();
 
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);

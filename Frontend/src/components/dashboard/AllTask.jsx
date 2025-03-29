@@ -4,18 +4,12 @@ import { useParams, useNavigate } from "react-router-dom"; // ✅ Import useNavi
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronRight, faTrash } from "@fortawesome/free-solid-svg-icons";
 
-export default function TaskToday({ setActiveTab }) {
+export default function AllTask({ setActiveTab }) {
   const { user } = useParams();
   const navigate = useNavigate(); // ✅ Get navigate function
   const [taskCount, setTaskCount] = useState(0);
   const [error, setError] = useState("");
   const [tasks, setTasks] = useState([]);
-  const [taskData, setTaskData] = useState({ title: "", description: "" });
-
-  const handleTaskChange = (e) => {
-    const { name, value } = e.target;
-    setTaskData((prev) => ({ ...prev, [name]: value }));
-  };
 
   const deleteTask = async (taskId) => {
     if (!taskId) {
@@ -39,25 +33,10 @@ export default function TaskToday({ setActiveTab }) {
   const fetchTasks = async () => {
     try {
       const res = await axios.get(`http://localhost:5000/get_all/${user}`);
-      const fetchTask = res.data.filter((task) => task.status !== "Complete");
-      setTasks(fetchTask);
-      setTaskCount(fetchTask.length);
+      setTasks(res.data);
+      setTaskCount(res.data.length);
     } catch (error) {
       console.error("Error fetching tasks:", error);
-    }
-  };
-
-  const handleAddTask = async (e) => {
-    e.preventDefault();
-    try {
-      await axios.post("http://localhost:5000/create_task", taskData, {
-        withCredentials: true,
-        headers: { "Content-Type": "application/json" },
-      });
-      setTaskData({ title: "", description: "" });
-      fetchTasks();
-    } catch (error) {
-      setError("Failed to add task.");
     }
   };
 
@@ -73,33 +52,6 @@ export default function TaskToday({ setActiveTab }) {
       </h1>
       <div className="w-full mx-auto h-[94vh] p-4 bg-white shadow rounded-lg flex-1">
         {error && <p className="text-red-500">{error}</p>}
-
-        {/* Task Form */}
-        <form onSubmit={handleAddTask} className="flex flex-col gap-2 mb-4">
-          <input
-            type="text"
-            name="title"
-            value={taskData.title}
-            onChange={handleTaskChange}
-            placeholder="Task Title"
-            required
-            className="p-2 border rounded-lg text-sm outline-0"
-          />
-          <textarea
-            name="description"
-            value={taskData.description}
-            onChange={handleTaskChange}
-            placeholder="Task Description"
-            required
-            className="p-2 border rounded-lg h-20 text-sm outline-0"
-          />
-          <button
-            type="submit"
-            className="bg-[#38383A] text-white py-2 rounded-lg text-sm hover:bg-[#272728]"
-          >
-            Add Task
-          </button>
-        </form>
 
         {/* Task List */}
         <div className="space-y-2 overflow-y-scroll scroll-smooth min-h-[19vh] max-h-[53vh]">

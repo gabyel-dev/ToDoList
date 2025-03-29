@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser, faLock } from "@fortawesome/free-solid-svg-icons";
 import { faEye, faEyeSlash } from "@fortawesome/free-regular-svg-icons";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
 import axios from "axios";
 
@@ -14,7 +14,7 @@ const hide = <FontAwesomeIcon icon={faEyeSlash} />;
 
 export default function ResetPass() {
   const navigate = useNavigate();
-
+  const { user } = useParams();
   const [error, setError] = useState("");
   const [showPassword1, setShowPassword1] = useState(false);
   const [showPassword2, setShowPassword2] = useState(false);
@@ -79,7 +79,7 @@ export default function ResetPass() {
         withCredentials: true,
       })
       .then((res) => {
-        navigate(res.data.logged_in ? "/dashboard" : "/reset-password");
+        navigate(res.data.logged_in ? `/dashboard/${user}` : "/reset-password");
       });
   }, [navigate]);
 

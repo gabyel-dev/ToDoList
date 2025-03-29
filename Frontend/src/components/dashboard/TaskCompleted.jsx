@@ -1,14 +1,15 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 
 export default function CompleteTask({ setActiveTab }) {
-  const { user } = useParams();
+  const { user, id } = useParams();
   const [tasks, setTasks] = useState([]);
   const [count, setCount] = useState(0);
   const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   const fetchTask = async () => {
     try {
@@ -50,7 +51,13 @@ export default function CompleteTask({ setActiveTab }) {
                     {task.description}
                   </p>
                 </div>
-                <button onClick={() => setActiveTab("TaskOverview")}>
+                <button
+                  onClick={() => {
+                    setActiveTab("Taskoverview"); // Call activeTab function
+                    navigate(`/dashboard/${user}/task/${task.id}`); // Navigate to the new route
+                  }}
+                  className="hover:bg-gray-200 p-2 rounded-full"
+                >
                   <FontAwesomeIcon icon={faChevronRight} />
                 </button>
               </div>

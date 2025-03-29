@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser, faLock } from "@fortawesome/free-solid-svg-icons";
 import { faEye, faEyeSlash } from "@fortawesome/free-regular-svg-icons";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
 import axios from "axios";
 
@@ -14,6 +14,7 @@ const hide = <FontAwesomeIcon icon={faEyeSlash} />;
 
 export default function Register() {
   const navigate = useNavigate();
+  const { user } = useParams();
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [registerData, setRegisterData] = useState({
@@ -64,7 +65,7 @@ export default function Register() {
         withCredentials: true,
       })
       .then((res) => {
-        navigate(res.data.logged_in ? "/dashboard" : "/register");
+        navigate(res.data.logged_in ? `/dashboard/${user}` : "/register");
       });
   }, [navigate]);
 

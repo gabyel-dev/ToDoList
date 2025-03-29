@@ -20,6 +20,13 @@ export default function TaskOverview({ activeTab, setActiveTab }) {
   };
 
   const edit = () => {
+    if (!canEdit) {
+      setEditTask({
+        title: task.title,
+        description: task.description,
+        status: task.status,
+      });
+    }
     setCanEdit(!canEdit);
   };
 
@@ -76,6 +83,7 @@ export default function TaskOverview({ activeTab, setActiveTab }) {
     <div className="flex min-h-screen bg-white p-5">
       {/* Sidebar Menu */}
       <Menu activeTab={activeTab} setActiveTab={setActiveTab} />
+      {activeTab === "All" && nav()}
       {activeTab === "Completed" && nav()}
       {activeTab === "TaskOverview" && nav()}
       {/* Main Content */}
