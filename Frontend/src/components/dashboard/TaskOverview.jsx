@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
 import Menu from "./DashboardMenu";
+import { text } from "@fortawesome/fontawesome-svg-core";
 
 export default function TaskOverview({ activeTab, setActiveTab }) {
   const [task, setTask] = useState(null);
@@ -27,6 +28,16 @@ export default function TaskOverview({ activeTab, setActiveTab }) {
         status: task.status,
       });
     }
+    setCanEdit(!canEdit);
+  };
+
+  const cancel = () => {
+    setEditTask({
+      title: task.title,
+      description: task.description,
+      status: task.status,
+    });
+
     setCanEdit(!canEdit);
   };
 
@@ -96,9 +107,12 @@ export default function TaskOverview({ activeTab, setActiveTab }) {
               type="text"
               name="title"
               disabled={!canEdit}
-              placeholder={task.title}
-              value={editTask.title}
+              value={canEdit ? editTask.title : task?.title}
               onChange={handleChange}
+              defaultValue={task.title}
+              className={
+                canEdit ? `border-b-1 border-b-gray-500` : "border-none"
+              }
             />
           </p>
           <p className="text-lg">
@@ -107,9 +121,11 @@ export default function TaskOverview({ activeTab, setActiveTab }) {
               type="text"
               name="description"
               disabled={!canEdit}
-              placeholder={task.description}
-              value={editTask.description}
+              value={canEdit ? editTask.description : task?.description}
               onChange={handleChange}
+              className={
+                canEdit ? `border-b-1 border-b-gray-500` : "border-none"
+              }
             />
           </p>
           <div>
@@ -141,15 +157,17 @@ export default function TaskOverview({ activeTab, setActiveTab }) {
               ) : (
                 <span
                   className={`ml-2 px-3 py-1 text-sm rounded-lg text-white ${
-                    task.status === "Completed"
-                      ? "bg-green-500"
-                      : "bg-yellow-500"
+                    task.status === "Complete" ? "bg-gray-300" : "bg-gray-500"
                   }`}
                 >
                   {task.status}
                 </span>
               )}
             </p>
+            <div className="flex gap-2">
+              <span className="font-semibold text-gray-700">Date Posted:</span>
+              {taskDate}
+            </div>
           </div>
         </div>
         {/* Navigation Buttons */}
@@ -168,6 +186,14 @@ export default function TaskOverview({ activeTab, setActiveTab }) {
             onClick={canEdit ? updateTask : edit}
           >
             {canEdit ? "Save" : "Edit Task"}
+          </button>
+          <button
+            className={`${
+              canEdit ? "block" : "hidden"
+            } bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition`}
+            onClick={canEdit && cancel}
+          >
+            {canEdit && "Cancel"}
           </button>
         </div>
       </div>
