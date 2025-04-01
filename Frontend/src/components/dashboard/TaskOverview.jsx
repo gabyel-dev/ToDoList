@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
 import Menu from "./DashboardMenu";
-import { text } from "@fortawesome/fontawesome-svg-core";
 
 export default function TaskOverview({ activeTab, setActiveTab }) {
   const [task, setTask] = useState(null);

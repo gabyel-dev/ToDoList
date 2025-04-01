@@ -225,3 +225,29 @@ def update_task(id):
     finally:
         cursor.close()
         conn.close()
+
+@auth_bp.route('/search')
+def search():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    query = request.args.get('q', "").strip()  # Trim input to avoid errors
+    user_id = request.args.get('user_id', "")
+
+    try:
+        cursor.execute('SELECT id, title FROM tasks WHERE user_id = %s AND title ILIKE %s', (user_id, f"%{query}%",))
+        result = cursor.fetchall()
+
+
+        return jsonify([{'id': row['id'], 'title': row['title']} for row in result])
+
+
+    except Exception as e:
+
+        return jsonify({'error': str(e)}), 500
+    finally:
+        cursor.close()
+        conn.close()
+
+
+
+        

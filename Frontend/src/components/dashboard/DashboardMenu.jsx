@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   faBars,
   faFilter,
@@ -10,12 +10,45 @@ import {
   faXmark,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 
 export default function Menu({ activeTab, setActiveTab }) {
   const navigate = useNavigate();
+  const { user, id } = useParams();
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [search, setSearch] = useState("");
+  const [getData, setGetData] = useState([{}]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchTaskTitle = async () => {
+      if (!search.trim()) {
+        setGetData([]); // Clear results when search is empty
+        return;
+      }
+
+      setLoading(true);
+      try {
+        const res = await axios.get(
+          `http://localhost:5000/search?q=${search}&user_id=${user}`
+        );
+        console.log("Search API response:", res.data);
+        setGetData(res.data);
+      } catch (error) {
+        console.error("Search error:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    // Debounce to avoid too many API calls (wait 300ms after typing)
+    const timeout = setTimeout(() => {
+      fetchTaskTitle();
+    }, 300);
+
+    return () => clearTimeout(timeout); // Cleanup on every re-render
+  }, [search, user]); // Runs every time search or user changes
 
   const handleLogout = async () => {
     await axios.post(
@@ -62,10 +95,35 @@ export default function Menu({ activeTab, setActiveTab }) {
               <input
                 type="text"
                 placeholder="Search"
-                className="outline-none ml-2 w-full text-sm bg-transparent"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="search outline-none ml-2 w-full text-sm bg-transparent"
               />
             )}
           </div>
+
+          {search.trim() && (
+            <div className="flex flex-col text-sm bg-white rounded-bl-md rounded-br-md p-2 absolute top-30 ">
+              {loading ? (
+                <p>Loading...</p>
+              ) : getData.length > 0 ? (
+                getData.map((task) => (
+                  <p
+                    key={task.id}
+                    onClick={() => {
+                      setActiveTab("Taskoverview");
+                      navigate(`/dashboard/${user}/task/${task.id}`);
+                    }}
+                    className="cursor-pointer border-b-1 border-b-gray-200 "
+                  >
+                    {task.title}
+                  </p>
+                ))
+              ) : (
+                <p>No Result</p>
+              )}
+            </div>
+          )}
 
           {/* Tasks Section */}
           <div>
