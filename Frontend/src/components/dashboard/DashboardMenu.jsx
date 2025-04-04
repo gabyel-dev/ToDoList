@@ -15,7 +15,7 @@ import axios from "axios";
 
 export default function Menu({ activeTab, setActiveTab }) {
   const navigate = useNavigate();
-  const { user, id } = useParams();
+  const { user } = useParams();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [search, setSearch] = useState("");
   const [getData, setGetData] = useState([{}]);

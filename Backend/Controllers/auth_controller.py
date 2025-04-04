@@ -126,17 +126,18 @@ def add_tasks():
     userID = session['user']
     taskTITLE = data.get('title')
     taskDESC = data.get('description')
+    taskPRIO = data.get('prio')
     
     conn = get_db_connection()
     cursor = conn.cursor()
     
     cursor.execute(
             '''
-            INSERT INTO tasks (user_id, title, description) 
-            VALUES (%s, %s, %s) 
-            RETURNING id, user_id, title, description, status, created_at
+            INSERT INTO tasks (user_id, title, description, priority) 
+            VALUES (%s, %s, %s, %s) 
+            RETURNING id, user_id, title, description, status, created_at, priority
             ''',
-            (userID, taskTITLE, taskDESC)
+            (userID, taskTITLE, taskDESC, taskPRIO)
         )
     new_task = cursor.fetchone()
     
@@ -155,7 +156,7 @@ def get_tasks(id):
     cursor = conn.cursor()
 
     try:
-        cursor.execute('SELECT id, title, description, status, created_at FROM tasks WHERE user_id = %s', (id,))
+        cursor.execute('SELECT id, title, description, status, created_at, priority FROM tasks WHERE user_id = %s', (id,))
         tasks = cursor.fetchall()
 
         return jsonify(tasks)
@@ -171,7 +172,7 @@ def get_task(id):
     cursor = conn.cursor()
     
     try:
-        cursor.execute('SELECT id, title, description, status, created_at FROM tasks WHERE id = %s', (id,))
+        cursor.execute('SELECT id, title, description, status, created_at, priority FROM tasks WHERE id = %s', (id,))
         task = cursor.fetchone()
   
 
@@ -212,11 +213,12 @@ def update_task(id):
     taskTITLE = data.get('title')
     taskDESC = data.get('description')
     taskSTATUS = data.get('status')
+    taskPRIO = data.get('prio')
     conn = get_db_connection()
     cursor = conn.cursor()
     
     try:
-        cursor.execute('UPDATE tasks SET title = %s, description = %s, status = %s WHERE id = %s', (taskTITLE, taskDESC, taskSTATUS, id))
+        cursor.execute('UPDATE tasks SET title = %s, description = %s, status = %s, priority = %s WHERE id = %s', (taskTITLE, taskDESC, taskSTATUS, taskPRIO, id))
         conn.commit()
         
         return jsonify({'message': 'task updated successfully'}), 200

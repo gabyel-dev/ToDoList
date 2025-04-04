@@ -9,6 +9,7 @@ export default function TaskOverview({ activeTab, setActiveTab }) {
     title: "",
     description: "",
     status: "",
+    prio: "",
   });
   const [canEdit, setCanEdit] = useState(false);
   const [taskDate, setTaskDate] = useState("");
@@ -25,6 +26,7 @@ export default function TaskOverview({ activeTab, setActiveTab }) {
         title: task.title,
         description: task.description,
         status: task.status,
+        prio: task.priority,
       });
     }
     setCanEdit(!canEdit);
@@ -35,9 +37,9 @@ export default function TaskOverview({ activeTab, setActiveTab }) {
       title: task.title,
       description: task.description,
       status: task.status,
+      prio: task.priority,
     });
-
-    setCanEdit(!canEdit);
+    setCanEdit(false);
   };
 
   useEffect(() => {
@@ -52,16 +54,15 @@ export default function TaskOverview({ activeTab, setActiveTab }) {
   }, [activeTab, navigate, user]);
 
   const handleChange = (e) => {
-    e.preventDefault();
     const { name, value } = e.target;
-    setEditTask((task) => ({ ...task, [name]: value }));
+    setEditTask((prev) => ({ ...prev, [name]: value }));
   };
 
   const updateTask = async () => {
     await axios.post(`http://localhost:5000/update/${id}`, editTask, {
       withCredentials: true,
     });
-    setEditTask({ title: "", description: "", status: "" });
+    setEditTask({ title: "", description: "", status: "", prio: "" });
     setCanEdit(false);
     fetchTask();
   };
@@ -96,6 +97,7 @@ export default function TaskOverview({ activeTab, setActiveTab }) {
       {activeTab === "All" && nav()}
       {activeTab === "Completed" && nav()}
       {activeTab === "TaskOverview" && nav()}
+
       {/* Main Content */}
       <div className="flex-grow px-5">
         <h1 className="text-2xl font-bold text-gray-800">Task Overview</h1>
@@ -106,11 +108,12 @@ export default function TaskOverview({ activeTab, setActiveTab }) {
               type="text"
               name="title"
               disabled={!canEdit}
-              value={canEdit ? editTask.title : task?.title}
+              value={canEdit ? editTask.title : task.title}
               onChange={handleChange}
-              defaultValue={task.title}
               className={
-                canEdit ? `border-b-1 border-b-gray-500` : "border-none"
+                canEdit
+                  ? "border-b-2 border-gray-400 outline-none"
+                  : "border-none bg-transparent"
               }
             />
           </p>
@@ -120,18 +123,23 @@ export default function TaskOverview({ activeTab, setActiveTab }) {
               type="text"
               name="description"
               disabled={!canEdit}
-              value={canEdit ? editTask.description : task?.description}
+              value={canEdit ? editTask.description : task.description}
               onChange={handleChange}
               className={
-                canEdit ? `border-b-1 border-b-gray-500` : "border-none"
+                canEdit
+                  ? "border-b-2 border-gray-400 outline-none"
+                  : "border-none bg-transparent"
               }
             />
           </p>
+
+          {/* Status and Priority */}
           <div>
-            <p className="text-lg">
-              <span className="font-semibold text-gray-700">Status:</span>
-              {canEdit ? (
-                <div className="ml-2 flex items-center gap-3">
+            <p className="text-lg font-semibold text-gray-700">Status:</p>
+            {canEdit ? (
+              <div className="ml-2 flex flex-col gap-4 mt-2">
+                {/* Status */}
+                <div className="flex items-center gap-3">
                   <label className="flex items-center gap-1">
                     <input
                       type="radio"
@@ -153,22 +161,62 @@ export default function TaskOverview({ activeTab, setActiveTab }) {
                     <span>Completed</span>
                   </label>
                 </div>
-              ) : (
+
+                {/* Priority */}
+                <div className="flex items-center gap-5">
+                  <label className="flex items-center gap-1">
+                    <input
+                      type="radio"
+                      name="prio"
+                      value="High"
+                      checked={editTask.prio === "High"}
+                      onChange={handleChange}
+                    />
+                    <span>High</span>
+                  </label>
+                  <label className="flex items-center gap-1">
+                    <input
+                      type="radio"
+                      name="prio"
+                      value="Medium"
+                      checked={editTask.prio === "Medium"}
+                      onChange={handleChange}
+                    />
+                    <span>Medium</span>
+                  </label>
+                  <label className="flex items-center gap-1">
+                    <input
+                      type="radio"
+                      name="prio"
+                      value="Low"
+                      checked={editTask.prio === "Low"}
+                      onChange={handleChange}
+                    />
+                    <span>Low</span>
+                  </label>
+                </div>
+              </div>
+            ) : (
+              <div className="ml-2 flex flex-col gap-2">
                 <span
-                  className={`ml-2 px-3 py-1 text-sm rounded-lg text-white ${
+                  className={`px-3 py-1 text-sm rounded-lg text-white w-max ${
                     task.status === "Complete" ? "bg-gray-300" : "bg-gray-500"
                   }`}
                 >
                   {task.status}
                 </span>
-              )}
-            </p>
-            <div className="flex gap-2">
+                <span className="text-lg font-semibold text-gray-600">
+                  Priority: <strong>{task.priority}</strong>
+                </span>
+              </div>
+            )}
+            <div className="flex gap-2 mt-4">
               <span className="font-semibold text-gray-700">Date Posted:</span>
               {taskDate}
             </div>
           </div>
         </div>
+
         {/* Navigation Buttons */}
         <div className="mt-6 flex gap-4">
           <button
@@ -186,14 +234,14 @@ export default function TaskOverview({ activeTab, setActiveTab }) {
           >
             {canEdit ? "Save" : "Edit Task"}
           </button>
-          <button
-            className={`${
-              canEdit ? "block" : "hidden"
-            } bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition`}
-            onClick={canEdit && cancel}
-          >
-            {canEdit && "Cancel"}
-          </button>
+          {canEdit && (
+            <button
+              className="bg-red-500 text-white px-5 py-2 rounded-lg hover:bg-red-600 transition"
+              onClick={cancel}
+            >
+              Cancel
+            </button>
+          )}
         </div>
       </div>
     </div>
