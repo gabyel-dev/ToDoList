@@ -10,6 +10,8 @@ export default function AllTask({ setActiveTab }) {
   const [taskCount, setTaskCount] = useState(0);
   const [error, setError] = useState("");
   const [tasks, setTasks] = useState([]);
+  const [filtering, setFiltering] = useState(false);
+  const [filtered, setFiltered] = useState([]);
 
   const deleteTask = async (taskId) => {
     if (!taskId) {
@@ -30,6 +32,21 @@ export default function AllTask({ setActiveTab }) {
     }
   };
 
+  const handleChange = (e) => {
+    const selectedPriority = e.target.value;
+
+    if (selectedPriority) {
+      setFiltering(true);
+      const filteredHigh = tasks.filter(
+        (task) => task.priority === selectedPriority
+      );
+      setFiltered(filteredHigh);
+    } else {
+      setFiltering(false);
+      setFiltered([]);
+    }
+  };
+
   const fetchTasks = async () => {
     try {
       const res = await axios.get(`http://localhost:5000/get_all/${user}`);
@@ -44,19 +61,34 @@ export default function AllTask({ setActiveTab }) {
     fetchTasks();
   }, [user]);
 
+  const taskToShow = filtering ? filtered : tasks;
+
   return (
     <div className="flex flex-col">
       {/* Task Content */}
       <h1 className="text-xl font-bold text-gray-800 mb-4">
         All Tasks ({taskCount})
       </h1>
-      <div className="w-full mx-auto h-[94vh] p-4 bg-white shadow rounded-lg flex-1">
+      <div className="w-full mt-4">
+        <label className="mr-2 font-medium">Filter by Priority:</label>
+        <select
+          name="priority"
+          onChange={handleChange}
+          defaultValue=""
+          className="border p-1 rounded text-sm"
+        >
+          <option value="">All</option>
+          <option value="High">High</option>
+          <option value="Medium">Medium</option>
+          <option value="Low">Low</option>
+        </select>
+
         {error && <p className="text-red-500">{error}</p>}
 
         {/* Task List */}
         <div className="space-y-2 overflow-y-scroll scroll-smooth min-h-[19vh] max-h-[53vh]">
-          {tasks.length > 0 ? (
-            tasks.map((task) => (
+          {taskToShow.length > 0 ? (
+            taskToShow.map((task) => (
               <div
                 key={task.id}
                 className="flex items-center justify-between p-3 bg-gray-100 rounded-lg shadow-sm w-[68vw]"

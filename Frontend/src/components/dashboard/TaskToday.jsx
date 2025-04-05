@@ -3,12 +3,14 @@ import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronRight, faTrash } from "@fortawesome/free-solid-svg-icons";
+import PieCharts from "./Chart/PieChart";
 
 export default function TaskToday({ setActiveTab }) {
   const { user } = useParams();
   const navigate = useNavigate();
 
   const [taskCount, setTaskCount] = useState(0);
+  const [taskCompleted, setTaskCompleted] = useState(0);
   const [error, setError] = useState("");
   const [tasks, setTasks] = useState([]);
   const [taskData, setTaskData] = useState({
@@ -42,7 +44,12 @@ export default function TaskToday({ setActiveTab }) {
   const fetchTasks = async () => {
     try {
       const res = await axios.get(`http://localhost:5000/get_all/${user}`);
+      const fetchCompleted = res.data.filter(
+        (task) => task.status !== "Incomplete"
+      );
       const fetchTask = res.data.filter((task) => task.status !== "Complete");
+
+      setTaskCompleted(fetchCompleted.length);
       setTasks(fetchTask);
       setTaskCount(fetchTask.length);
     } catch (error) {
@@ -85,6 +92,11 @@ export default function TaskToday({ setActiveTab }) {
 
   const tasksToShow = filtering ? filtered : tasks;
 
+  const pieData = [
+    { name: "Completed", value: taskCompleted },
+    { name: "Incomplete", value: taskCount },
+  ];
+
   return (
     <div className="flex flex-col h-[94vh]">
       <h1 className="text-xl font-bold text-gray-800 mb-4">
@@ -95,66 +107,74 @@ export default function TaskToday({ setActiveTab }) {
         {error && <p className="text-red-500">{error}</p>}
 
         {/* Task Form */}
-        <form onSubmit={handleAddTask} className="flex flex-col gap-2 mb-4">
-          <input
-            type="text"
-            name="title"
-            value={taskData.title}
-            onChange={handleTaskChange}
-            placeholder="Task Title"
-            required
-            className="p-2 border rounded-lg text-sm outline-0"
-          />
-          <textarea
-            name="description"
-            value={taskData.description}
-            onChange={handleTaskChange}
-            placeholder="Task Description"
-            required
-            className="p-2 border rounded-lg h-20 text-sm outline-0"
-          />
-          <div className="flex gap-5 justify-start items-center">
-            <div className="flex gap-3">
-              <label htmlFor="high">High</label>
-              <input
-                name="prio"
-                type="radio"
-                value="High"
-                checked={taskData.prio === "High"}
-                onChange={handleTaskChange}
-                required
-              />
-            </div>
-            <div className="flex gap-3">
-              <label htmlFor="med">Medium</label>
-              <input
-                name="prio"
-                type="radio"
-                value="Medium"
-                checked={taskData.prio === "Medium"}
-                onChange={handleTaskChange}
-                required
-              />
-            </div>
-            <div className="flex gap-3">
-              <label htmlFor="low">Low</label>
-              <input
-                name="prio"
-                type="radio"
-                value="Low"
-                checked={taskData.prio === "Low"}
-                onChange={handleTaskChange}
-                required
-              />
-            </div>
-          </div>
-          <button
-            type="submit"
-            className="bg-[#38383A] text-white py-2 rounded-lg text-sm hover:bg-[#272728]"
+        <div className="flex">
+          <form
+            onSubmit={handleAddTask}
+            className="flex flex-col gap-2 mb-4 w-[37vw] p-6 "
           >
-            Add Task
-          </button>
-        </form>
+            <input
+              type="text"
+              name="title"
+              value={taskData.title}
+              onChange={handleTaskChange}
+              placeholder="Task Title"
+              required
+              className="p-2 border rounded-lg text-sm outline-0"
+            />
+            <textarea
+              name="description"
+              value={taskData.description}
+              onChange={handleTaskChange}
+              placeholder="Task Description"
+              required
+              className="p-2 border rounded-lg h-20 text-sm outline-0"
+            />
+            <div className="flex gap-5 justify-start items-center">
+              <div className="flex gap-3">
+                <label htmlFor="high">High</label>
+                <input
+                  name="prio"
+                  type="radio"
+                  value="High"
+                  checked={taskData.prio === "High"}
+                  onChange={handleTaskChange}
+                  required
+                />
+              </div>
+              <div className="flex gap-3">
+                <label htmlFor="med">Medium</label>
+                <input
+                  name="prio"
+                  type="radio"
+                  value="Medium"
+                  checked={taskData.prio === "Medium"}
+                  onChange={handleTaskChange}
+                  required
+                />
+              </div>
+              <div className="flex gap-3">
+                <label htmlFor="low">Low</label>
+                <input
+                  name="prio"
+                  type="radio"
+                  value="Low"
+                  checked={taskData.prio === "Low"}
+                  onChange={handleTaskChange}
+                  required
+                />
+              </div>
+            </div>
+            <button
+              type="submit"
+              className="bg-[#38383A] text-white py-2 rounded-lg text-sm hover:bg-[#272728]"
+            >
+              Add Task
+            </button>
+          </form>
+          <div className="w-[30vw]">
+            <PieCharts data={pieData} className="shadow-md" />
+          </div>
+        </div>
 
         {/* Filter */}
         <div className="w-full mt-4">
