@@ -108,74 +108,91 @@ export default function TaskToday({ setActiveTab }) {
 
         {/* Task Form */}
         <div className="flex">
-          <form
-            onSubmit={handleAddTask}
-            className="flex flex-col gap-2 mb-4 w-[37vw] p-6 "
-          >
-            <input
-              type="text"
-              name="title"
-              value={taskData.title}
-              onChange={handleTaskChange}
-              placeholder="Task Title"
-              required
-              className="p-2 border rounded-lg text-sm outline-0"
-            />
-            <textarea
-              name="description"
-              value={taskData.description}
-              onChange={handleTaskChange}
-              placeholder="Task Description"
-              required
-              className="p-2 border rounded-lg h-20 text-sm outline-0"
-            />
-            <div className="flex gap-5 justify-start items-center">
-              <div className="flex gap-3">
-                <label htmlFor="high">High</label>
-                <input
-                  name="prio"
-                  type="radio"
-                  value="High"
-                  checked={taskData.prio === "High"}
-                  onChange={handleTaskChange}
-                  required
-                />
-              </div>
-              <div className="flex gap-3">
-                <label htmlFor="med">Medium</label>
-                <input
-                  name="prio"
-                  type="radio"
-                  value="Medium"
-                  checked={taskData.prio === "Medium"}
-                  onChange={handleTaskChange}
-                  required
-                />
-              </div>
-              <div className="flex gap-3">
-                <label htmlFor="low">Low</label>
-                <input
-                  name="prio"
-                  type="radio"
-                  value="Low"
-                  checked={taskData.prio === "Low"}
-                  onChange={handleTaskChange}
-                  required
-                />
-              </div>
+          <div className="flex flex-col">
+            <div>
+              <h1 className="text-2xl font-bold text-[#383838]">
+                Add new task
+              </h1>
             </div>
-            <button
-              type="submit"
-              className="bg-[#38383A] text-white py-2 rounded-lg text-sm hover:bg-[#272728]"
-            >
-              Add Task
-            </button>
-          </form>
+            <div>
+              <form
+                onSubmit={handleAddTask}
+                className="flex flex-col gap-2 mb-4 w-[37vw] pr-6 py-6 "
+              >
+                <input
+                  type="text"
+                  name="title"
+                  value={taskData.title}
+                  onChange={handleTaskChange}
+                  placeholder="Task Title"
+                  required
+                  className="p-2 border rounded-lg text-sm outline-0"
+                />
+                <textarea
+                  name="description"
+                  value={taskData.description}
+                  onChange={handleTaskChange}
+                  placeholder="Task Description"
+                  required
+                  className="p-2 border rounded-lg h-20 text-sm outline-0"
+                />
+                <div className="flex flex-col gap-0 justify-start items-start">
+                  <div>
+                    <p className="text-gray-500 text-[14px]">
+                      Choose priority:
+                    </p>
+                  </div>
+                  <div className="flex gap-2 text-sm text-gray-800">
+                    <div className="flex gap-3">
+                      <label htmlFor="high">High</label>
+                      <input
+                        name="prio"
+                        type="radio"
+                        value="High"
+                        checked={taskData.prio === "High"}
+                        onChange={handleTaskChange}
+                        required
+                      />
+                    </div>
+                    <div className="flex gap-3">
+                      <label htmlFor="med">Medium</label>
+                      <input
+                        name="prio"
+                        type="radio"
+                        value="Medium"
+                        checked={taskData.prio === "Medium"}
+                        onChange={handleTaskChange}
+                        required
+                      />
+                    </div>
+                    <div className="flex gap-3">
+                      <label htmlFor="low">Low</label>
+                      <input
+                        name="prio"
+                        type="radio"
+                        value="Low"
+                        checked={taskData.prio === "Low"}
+                        onChange={handleTaskChange}
+                        required
+                      />
+                    </div>
+                  </div>
+                </div>
+                <button
+                  type="submit"
+                  className="bg-[#38383A] text-white py-2 rounded-lg text-sm hover:bg-[#272728]"
+                >
+                  Add Task
+                </button>
+              </form>
+            </div>
+          </div>
           <div className="w-[30vw]">
             <PieCharts data={pieData} className="shadow-md" />
           </div>
         </div>
 
+        <hr className="text-gray-300 mb-2" />
         {/* Filter */}
         <div className="w-full mt-4">
           <label className="mr-2 font-medium">Filter by Priority:</label>
