@@ -17,7 +17,7 @@ const hide = <FontAwesomeIcon icon={faEyeSlash} />;
 
 export default function Login() {
   const navigate = useNavigate();
-
+  const [login, setLogin] = useState(false);
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loginData, setLoginData] = useState({
@@ -29,6 +29,8 @@ export default function Login() {
     e.preventDefault();
 
     try {
+      if (login) return;
+      setLogin(true);
       const res = await axios.post("http://localhost:5000/login", loginData, {
         withCredentials: true,
         headers: {
@@ -44,6 +46,8 @@ export default function Login() {
       );
 
       setTimeout(() => setError(""), 5000);
+    } finally {
+      setLogin(false);
     }
   };
 
@@ -126,9 +130,12 @@ export default function Login() {
 
               <button
                 type="submit"
-                className="bg-[#38383A] rounded-sm px-8 py-2 text-white cursor-pointer"
+                disabled={login}
+                className={`${
+                  login ? "bg-gray-500" : "bg-[#38383A]"
+                } rounded-sm px-8 py-2 text-white cursor-pointer`}
               >
-                LOGIN
+                {login ? "LOGIN..." : "LOGIN"}
               </button>
             </div>
           </form>

@@ -12,6 +12,7 @@ export default function AllTask({ setActiveTab }) {
   const [tasks, setTasks] = useState([]);
   const [filtering, setFiltering] = useState(false);
   const [filtered, setFiltered] = useState([]);
+  const [submitting, isSubmitting] = useState(false);
 
   const deleteTask = async (taskId) => {
     if (!taskId) {
@@ -20,6 +21,9 @@ export default function AllTask({ setActiveTab }) {
     }
 
     try {
+      if (submitting) return;
+      isSubmitting(true);
+
       await axios.delete(`http://localhost:5000/delete/${taskId}`, {
         withCredentials: true,
       });
@@ -29,6 +33,8 @@ export default function AllTask({ setActiveTab }) {
       setTaskCount((prevCount) => prevCount - 1);
     } catch (error) {
       console.error("Error deleting task:", error);
+    } finally {
+      isSubmitting(false);
     }
   };
 
@@ -114,6 +120,7 @@ export default function AllTask({ setActiveTab }) {
                     <FontAwesomeIcon icon={faChevronRight} />
                   </button>
                   <button
+                    disabled={submitting}
                     onClick={() => deleteTask(task.id)}
                     className="hover:bg-gray-200 p-2 rounded-full"
                   >

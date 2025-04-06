@@ -15,6 +15,7 @@ export default function TaskOverview({ activeTab, setActiveTab }) {
   const [taskDate, setTaskDate] = useState("");
   const { id, user } = useParams();
   const navigate = useNavigate();
+  const [submitting, isSubmitting] = useState(false);
 
   const nav = () => {
     navigate(`/dashboard/${user}`);
@@ -59,12 +60,20 @@ export default function TaskOverview({ activeTab, setActiveTab }) {
   };
 
   const updateTask = async () => {
-    await axios.post(`http://localhost:5000/update/${id}`, editTask, {
-      withCredentials: true,
-    });
-    setEditTask({ title: "", description: "", status: "", prio: "" });
-    setCanEdit(false);
-    fetchTask();
+    try {
+      if (submitting) return;
+      isSubmitting(true);
+      await axios.post(`http://localhost:5000/update/${id}`, editTask, {
+        withCredentials: true,
+      });
+      setEditTask({ title: "", description: "", status: "", prio: "" });
+      setCanEdit(false);
+      fetchTask();
+    } catch {
+      console.error("Failed to update task");
+    } finally {
+      isSubmitting(false);
+    }
   };
 
   const fetchTask = async () => {
@@ -230,6 +239,7 @@ export default function TaskOverview({ activeTab, setActiveTab }) {
           </button>
           <button
             className="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition"
+            disabled={submitting}
             onClick={canEdit ? updateTask : edit}
           >
             {canEdit ? "Save" : "Edit Task"}

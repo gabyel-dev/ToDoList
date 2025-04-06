@@ -21,11 +21,14 @@ export default function Register() {
     username: "",
     password: "",
   });
+  const [registerring, setRegsiterring] = useState(false);
 
   const handleRegister = async (e) => {
     e.preventDefault();
 
     try {
+      if (registerring) return;
+      setRegsiterring(true);
       await axios.post("http://localhost:5000/register", registerData, {
         withCredentials: true,
         headers: {
@@ -43,6 +46,8 @@ export default function Register() {
       );
 
       setTimeout(() => setError(""), 5000);
+    } finally {
+      setRegsiterring(false);
     }
   };
 
@@ -115,9 +120,12 @@ export default function Register() {
 
             <button
               type="submit"
-              className="bg-[#38383A] rounded-sm px-5 py-2 text-white cursor-pointer mt-3"
+              disabled={registerring}
+              className={`${
+                !registerring ? "bg-[#38383A]" : "bg-gray-500"
+              } rounded-sm px-5 py-2 text-white cursor-pointer mt-3`}
             >
-              Register
+              {registerring ? "Registering..." : "Register"}
             </button>
           </form>
         </div>

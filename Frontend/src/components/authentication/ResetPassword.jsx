@@ -23,11 +23,14 @@ export default function ResetPass() {
     password: "",
     newPassword: "",
   });
+  const [forgot, setForgot] = useState(false);
 
   const handleResetPassword = async (e) => {
     e.preventDefault();
 
     try {
+      if (forgot) return;
+      setForgot(true);
       await axios.post(
         "http://localhost:5000/reset-password",
         resetPasswordData,
@@ -52,6 +55,8 @@ export default function ResetPass() {
           : ""
       );
       setTimeout(() => setError(""), 5000);
+    } finally {
+      setForgot(false);
     }
   };
 
@@ -148,9 +153,12 @@ export default function ResetPass() {
 
             <button
               type="submit"
-              className="bg-[#38383A] rounded-sm px-5 py-2 text-white cursor-pointer mt-3"
+              disabled={forgot}
+              className={`${
+                forgot ? "bg-gray-500" : "bg-[#38383A]"
+              } rounded-sm px-5 py-2 text-white cursor-pointer mt-3`}
             >
-              RESET
+              {forgot ? "RESETTING..." : "RESET"}
             </button>
           </form>
         </div>

@@ -8,7 +8,7 @@ import PieCharts from "./Chart/PieChart";
 export default function TaskToday({ setActiveTab }) {
   const { user } = useParams();
   const navigate = useNavigate();
-
+  const [submitting, isSubmitting] = useState(false);
   const [taskCount, setTaskCount] = useState(0);
   const [taskCompleted, setTaskCompleted] = useState(0);
   const [error, setError] = useState("");
@@ -30,6 +30,8 @@ export default function TaskToday({ setActiveTab }) {
     if (!taskId) return;
 
     try {
+      if (submitting) return;
+      isSubmitting(true);
       await axios.delete(`http://localhost:5000/delete/${taskId}`, {
         withCredentials: true,
       });
@@ -38,6 +40,8 @@ export default function TaskToday({ setActiveTab }) {
       setTaskCount((prevCount) => prevCount - 1);
     } catch (error) {
       console.error("Error deleting task:", error);
+    } finally {
+      isSubmitting(false);
     }
   };
 
@@ -75,14 +79,20 @@ export default function TaskToday({ setActiveTab }) {
   const handleAddTask = async (e) => {
     e.preventDefault();
     try {
+      if (submitting) return;
+      isSubmitting(true);
+
       await axios.post("http://localhost:5000/create_task", taskData, {
         withCredentials: true,
         headers: { "Content-Type": "application/json" },
       });
+
       setTaskData({ title: "", description: "", prio: "" });
       fetchTasks();
     } catch (error) {
       setError("Failed to add task.");
+    } finally {
+      isSubmitting(false);
     }
   };
 
@@ -180,9 +190,10 @@ export default function TaskToday({ setActiveTab }) {
                 </div>
                 <button
                   type="submit"
+                  disabled={submitting}
                   className="bg-[#38383A] text-white py-2 rounded-lg text-sm hover:bg-[#272728]"
                 >
-                  Add Task
+                  {!isSubmitting ? "Adding task..." : "Add Task"}
                 </button>
               </form>
             </div>
@@ -237,6 +248,7 @@ export default function TaskToday({ setActiveTab }) {
                     <FontAwesomeIcon icon={faChevronRight} />
                   </button>
                   <button
+                    disabled={submitting}
                     onClick={() => deleteTask(task.id)}
                     className="hover:bg-gray-200 p-2 rounded-full"
                   >
